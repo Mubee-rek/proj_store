@@ -1,0 +1,96 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package parsermub;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author mubee
+ */
+public class Parsermub 
+{
+    public static void getParsedData()
+    {
+        BufferedReader reader;
+        try 
+        {
+            String Signal="NULL";
+            reader = new BufferedReader(new FileReader("data.json"));
+            String line = reader.readLine();
+            List<String> records = new ArrayList<>();
+            List<List> All_records = new ArrayList<>();
+            while (line != null) 
+            {
+                if(line.contains("logstash.something"))
+                {
+                    line = reader.readLine();
+                    continue;
+                }
+                if("{".equals(line))
+                {
+                    System.out.println("================Starting(Pushing Raw records to Single list)");
+                    Signal="Starting";
+                    line = reader.readLine();
+                }
+                if("}".equals(line))
+                {
+                    Signal="Ending";
+                    line = reader.readLine();
+                }
+                if("Starting".equals(Signal))
+                {
+                    records.add(line);
+                    line = reader.readLine();
+                }
+                if("Ending".equals(Signal))
+                {
+                    for (int i=0; i<records.size();i++)
+                    {
+                        System.out.println(records.get(i));
+                    }
+                    System.out.println("================Ending(Pushing lists to other list(list of list)\n");
+                    All_records.add(records);
+                    records = new ArrayList<>();
+                    
+                }                
+            }
+            System.out.println(">\n>\n>\nDisplaying Data from list of list");
+            reader.close();
+            for (List single_record_list : All_records) 
+            {
+                for (Object record : single_record_list) 
+                {
+                    System.out.println("Parse: "+record);
+					//parsing.....
+					/*while(key_match)
+					{
+						keylist.add(key_match.g(1))
+					}
+					while(v_match)
+					{
+						vlist.add(v_match.g(1))
+					}
+					keylist.app(vlist);*/
+                }
+                System.out.println("END OF RECORD\n");
+            }
+        } 
+        catch (IOException e) 
+        {
+             System.out.println(e);
+        }
+    }
+    public static void main(String[] args) 
+    {
+        getParsedData();
+    }
+    
+}
